@@ -5,9 +5,10 @@ import { UserModule } from './user/user.module';
 import { AddressModule } from './address/address.module';
 import { CommonModule } from './common/common.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
+import { AddressBookModule } from './address-book/address-book.module';
 
 @Module({
-  imports: [UserModule, AddressModule, CommonModule],
+  imports: [UserModule, AddressModule, CommonModule, AddressBookModule],
   controllers: [AppController],
   providers: [AppService],
 })

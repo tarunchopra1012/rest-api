@@ -191,3 +191,69 @@ In a nutshell, ErrorsInterceptor is designed to catch errors and transform speci
 ## @Options()
 
 @Options(): It defines an HTTP OPTIONS route. The HTTP OPTIONS method describes the communication options for the target resource. It typically returns information about the communication options available for a particular endpoint or resource.
+
+## Order of routes in a controller
+
+In a NestJS controller, routes are evaluated in the order they are defined, and the first matching route is used to handle the incoming request. This means that the sequence in which we define routes within a controller matters. Once a matching route is found, the request-handling process stops and the corresponding controller method is executed.
+
+## Order of Decorators
+
+Here’s the order in which decorators are evaluated:
+
+@Get(), @Post(), @Put(), @Delete(), etc.: These HTTP methods take precedence in route definition.
+
+@Param(): This defines route parameters and is evaluated after the HTTP method decorators.
+
+@Query(): Query parameters are evaluated after HTTP methods and route parameters.
+
+@Body(): The @Body() decorator is evaluated after HTTP methods, route parameters, and query parameters.
+
+@Headers(): When we use the @Headers() decorator, it’s evaluated after the previously mentioned decorators.
+
+@Request(): This is evaluated after all the other decorators.
+
+## Provider scope#
+Providers can have different scopes, which determine how they’re created and used in the application.
+
+NestJS supports three main provider scopes:
+
+Singleton: A singleton provider is instantiated only once throughout the application. After the application has been bootstrapped, all singleton providers have been created.
+
+Request: Request-scoped providers are created per incoming requests.
+
+Transient: Transient providers are created each time they are requested.
+
+Q: Out of the three provider scopes—singleton, request, and transient—which one is the default scope for the framework and why?
+Ans: By default, providers are singleton-scoped unless explicitly specified otherwise. This is because the singleton-scoped provider aligns with many use cases. Most of the time, we want to create and use a single instance of a service or provider throughout the application. This approach helps with efficiency, reduces resource consumption, and ensures that the state of the service is consistent across the application.
+
+## We use the @Injectable() decorator to specify a provider’s scope. Because providers are in the singleton scope by default, it’s unnecessary to declare them explicitly. If we wish to specify a singleton-scoped provider explicitly, we can use the Scope.DEFAULT value for the scope property.
+
+The example below demonstrates how to define the provider scope:
+
+```typescript
+// Apply request scope in AddressService
+// For every new HTTP request received, a new instance will be created
+@Injectable({ scope: Scope.REQUEST })
+export class RequestScopeService { }
+
+// Apply transient scope in AddressService
+// A new instance will be created every time it is requested or injected
+@Injectable({ scope: Scope.TRANSIENT })
+export class TransientScopeService {}
+
+// Apply default scope in AddressService
+// A shared instance is used across the application
+@Injectable({ scope: Scope.DEFAULT })
+export class SingletonScopeService { }
+```
+
+## Choose the right scope#
+The scope selection affects memory usage, the app’s behavior, and the way data is shared between the different components. Choosing the appropriate scope according to the app’s requirements is essential.
+
+Here are some typical use cases for each scope:
+
+Singleton scope: Most services are suitable for the default singleton scope. For example, a configuration service that loads application settings from a file and provides them to various components. A single instance ensures the same configuration data is shared across the application.
+
+Request scope: Specific situations, such as request tracking, require a request-based lifetime. One example is request tracking in a distributed microservices environment. Let’s say we need to log request headers, time stamps, and other request-specific details for an API with a microservices architecture. With request scope, we can create a new instance for each request, allowing each microservice to log request-specific details and context, making it easier to correlate and trace the path of a request as it moves from one microservice to another.
+
+Transient scope: This can be beneficial when we need independent instances with their state for different parts of the application. For example, consider LoggerService, which contains a consumer-specific prefix. To maintain individual prefixes for each consumer, we utilize the transient scope, ensuring that a new LoggerService instance is generated for each consumer. Consequently, the prefix property remains distinct and isn’t overridden.
