@@ -257,3 +257,27 @@ Singleton scope: Most services are suitable for the default singleton scope. For
 Request scope: Specific situations, such as request tracking, require a request-based lifetime. One example is request tracking in a distributed microservices environment. Let’s say we need to log request headers, time stamps, and other request-specific details for an API with a microservices architecture. With request scope, we can create a new instance for each request, allowing each microservice to log request-specific details and context, making it easier to correlate and trace the path of a request as it moves from one microservice to another.
 
 Transient scope: This can be beneficial when we need independent instances with their state for different parts of the application. For example, consider LoggerService, which contains a consumer-specific prefix. To maintain individual prefixes for each consumer, we utilize the transient scope, ensuring that a new LoggerService instance is generated for each consumer. Consequently, the prefix property remains distinct and isn’t overridden.
+
+## NestJS architecture#
+NestJS uses a modular architecture that enables developers to generate reusable code and organize individual modules for specific concerns. Here are some building blocks in NestJS:
+
+# Modules: 
+A module is a class mark with the @Module() decorator. It serves as a container for related controllers, providers, and other related codes. NestJS provides a powerful module system that allows developers to create reusable modules and organize their code.
+
+# Controllers: 
+A controller is responsible for handling incoming requests and returning responses to the client. It is a TypeScript class annotated with the @Controller() decorator. Controllers are used to define routes and endpoint handlers for the application.
+
+# Services: 
+In NestJS, a service is a TypeScript class annotated with the @Injectable() decorator. It is responsible for handling business logic, performing data operations, and providing functionality to other parts of the application through the NestJS dependency injection system.
+
+# Pipes: 
+Pipes can be applied to individual route handlers, controllers, or the entire application to transform input data before it is processed by a controller, making them useful for tasks such as validation and transformation.
+
+# Guards: 
+A guard is a class mark with the @Injectable() decorator and implements the CanActivate interface. NestJS applications use it to control access to endpoints by performing tasks such as authentication, authorization, and rate limiting.
+
+# Middleware: 
+Middleware functions access the request, response, and the next middleware in the stack. Middleware functions execute code, modify the request and response objects, end the request-response cycle, or call the next middleware in the stack.
+
+# Interceptors: 
+NestJS uses interceptors as classes that intercept incoming HTTP requests and outgoing HTTP responses. Interceptors handle logging, error handling, caching, or response transformation.
